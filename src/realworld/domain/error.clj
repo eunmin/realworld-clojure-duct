@@ -1,0 +1,2 @@
+(ns realworld.domain.error)
+

@@ -1,9 +1,38 @@
 {:duct.profile/base
  {:duct.core/project-ns realworld
 
-  :duct.router/cascading [#ig/ref :realworld.handler.users/login]
+  :duct.router/cascading [#ig/ref :realworld.handler/router]
+
+  :realworld.reitit/spec-coercion {}
+
+  :realworld.dto/load {}
   
-  :realworld.handler.users/login {}}
+  :realworld.handler/router
+  ["/api"
+   ["/user" {:name :user/current-user
+             :get {:handler #ig/ref :realworld.handler.user/current-user}
+             :put {:coercion #ig/ref :realworld.reitit/spec-coercion
+                   :parameters {:body :realworld.dto/update-user-input}
+                   :handler #ig/ref :realworld.handler.user/update-user}}]
+   ["/users"
+    ["" {:name :user/registration
+         :post {:coercion #ig/ref :realworld.reitit/spec-coercion
+                :parameters {:body :realworld.dto/registration-input}
+                :handler #ig/ref :realworld.handler.users/registration}}]
+    ["/login" {:name :user/login
+               :post {:coercion #ig/ref :realworld.reitit/spec-coercion
+                      :parameters {:body :realworld.dto/login-input}
+                      :handler #ig/ref :realworld.handler.users/login}}]]
+   ["/profiles"
+    ["/:username" {:name :profile/get
+                   :get {:parameters {:path :realworld.dto/username}
+                         :handler #ig/ref :realworld.handler.profiles/get}}]]]
+  
+  :realworld.handler.users/login {}
+  :realworld.handler.users/registration {}
+  :realworld.handler.user/current-user {}
+  :realworld.handler.user/update-user {}
+  :realworld.handler.profiles/get {}}
 
  :duct.profile/dev   #duct/include "dev"
  :duct.profile/local #duct/include "local"
