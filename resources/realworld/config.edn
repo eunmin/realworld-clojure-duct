@@ -9,30 +9,71 @@
   
   :realworld.handler/router
   ["/api"
-   ["/user" {:name :user/current-user
-             :get {:handler #ig/ref :realworld.handler.user/current-user}
-             :put {:coercion #ig/ref :realworld.reitit/spec-coercion
-                   :parameters {:body :realworld.dto/update-user-input}
-                   :handler #ig/ref :realworld.handler.user/update-user}}]
+   ["/user"
+    {:swagger {:tags ["user"]}}
+    [""
+     {:get {:summary "Get Current User"
+            :responses {200 {:body {:user :realworld.dto/user-payload}}}
+            :handler #ig/ref :realworld.handler.user/current-user}
+      :put {:summary "Update User"
+            :parameters {:body :realworld.dto/update-user-input}
+            :responses {200 {:body {:user :realworld.dto/user-payload}}}
+            :handler #ig/ref :realworld.handler.user/update-user}}]]
    ["/users"
-    ["" {:name :user/registration
-         :post {:coercion #ig/ref :realworld.reitit/spec-coercion
-                :parameters {:body :realworld.dto/registration-input}
-                :handler #ig/ref :realworld.handler.users/registration}}]
-    ["/login" {:name :user/login
-               :post {:coercion #ig/ref :realworld.reitit/spec-coercion
-                      :parameters {:body :realworld.dto/login-input}
-                      :handler #ig/ref :realworld.handler.users/login}}]]
+    {:swagger {:tags ["users"]}}
+    [""
+     {:post {:summary "Registration"
+             :parameters {:body :realworld.dto/registration-input}
+             :responses {200 {:body {:user :realworld.dto/user-payload}}}
+             :handler #ig/ref :realworld.handler.users/registration}}]
+    ["/login"
+     {:post {:summary "Authentication"
+             :parameters {:body :realworld.dto/login-input}
+             :responses {200 {:body {:user :realworld.dto/user-payload}}}
+             :handler #ig/ref :realworld.handler.users/login}}]]
    ["/profiles"
-    ["/:username" {:name :profile/get
-                   :get {:parameters {:path :realworld.dto/username}
-                         :handler #ig/ref :realworld.handler.profiles/get}}]]]
+    {:swagger {:tags ["profiles"]}}
+    ["/:username"
+     [""
+      {:get {:summary "Get Profile"
+             :parameters {:path {:username :realworld.dto/username}}
+             :responses {200 {:body {:profile :realworld.dto/profile-payload}}}
+             :handler #ig/ref :realworld.handler.profiles/get}}]
+     ["/follow"
+      {:post {:summary "Follow user"
+              :responses {200 {:body {:profile :realworld.dto/profile-payload}}}
+              :handler #ig/ref :realworld.handler.profiles/follow}
+       :delete {:summary "Unfollow user"
+                :responses {200 {:body {:profile :realworld.dto/profile-payload}}}
+                :handler #ig/ref :realworld.handler.profiles/unfollow}}]]]
+   ["/articles"
+    {:swagger {:tags ["articles"]}}
+    [""
+     {:get {:summary "List Articles"
+            :parameters {:query :realworld.dto/article-list-query}
+            :responses {200 {:body {:articles :realworld.dto/article-list-payload}}}
+            :handler #ig/ref :realworld.handler.articles/list}}]
+    ["/feed"
+     {:get {:summary "Feed Articles"
+            :parameters {:query :realworld.dto/article-feed-query}
+            :responses {200 {:body {:articles :realworld.dto/article-list-payload}}}
+            :handler #ig/ref :realworld.handler.articles/feed}}]
+    #_["/:slug"
+     {:get {:summary "Get Article"
+            :parameters {:path {:slug :realworld.dto/slug}}
+            :responses {200 {:body {:article :realworld.dto/article-payload}}}
+            :handler #ig/ref :realworld.handler.articles/get-article}}]]]
   
   :realworld.handler.users/login {}
   :realworld.handler.users/registration {}
   :realworld.handler.user/current-user {}
   :realworld.handler.user/update-user {}
-  :realworld.handler.profiles/get {}}
+  :realworld.handler.profiles/get {}
+  :realworld.handler.profiles/follow {}
+  :realworld.handler.profiles/unfollow {}
+  :realworld.handler.articles/list {}
+  :realworld.handler.articles/feed {}
+  :realworld.handler.articles/get-article {}}
 
  :duct.profile/dev   #duct/include "dev"
  :duct.profile/local #duct/include "local"

@@ -2,11 +2,28 @@
   (:require [integrant.core :as ig]))
 
 (defmethod ig/init-key :realworld.handler.profiles/get [_ options]
-  (fn [{update-user-input :body-params}]
+  (fn [_]
     {:status 200
-     :body {:user
-            {:email "jake@jake.jake"
-             :token "jwt.token.here"
-             :username "jake"
+     :body {:profile
+            {:username "jake"
              :bio "I work at statefarm"
-             :image nil}}}))
+             :image "https://static.productionready.io/images/smiley-cyrus.jpg"
+             :following false}}}))
+
+(defmethod ig/init-key :realworld.handler.profiles/follow [_ options]
+  (fn [_]
+    {:status 200
+     :body {:profile
+            {:username "jake"
+             :bio "I work at statefarm"
+             :image "https://static.productionready.io/images/smiley-cyrus.jpg"
+             :following false}}}))
+
+(defmethod ig/init-key :realworld.handler.profiles/unfollow [_ options]
+  (fn [_]
+    {:status 200
+     :body {:profile
+            {:username "jake"
+             :bio "I work at statefarm"
+             :image "https://static.productionready.io/images/smiley-cyrus.jpg"
+             :following false}}}))

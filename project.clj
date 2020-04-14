@@ -6,7 +6,8 @@
                  [duct/core "0.7.0"]
                  [duct/module.logging "0.4.0"]
                  [duct/module.web "0.7.0"]
-                 [metosin/reitit "0.4.2"]]
+                 [metosin/reitit "0.4.2"]
+                 [metosin/ring-swagger-ui "3.25.0"]]
   :plugins [[duct/lein-duct "0.12.1"]]
   :main ^:skip-aot realworld.main
   :resource-paths ["resources" "target/resources"]
