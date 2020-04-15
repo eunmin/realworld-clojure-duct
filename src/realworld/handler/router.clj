@@ -22,7 +22,14 @@
   (ring/ring-handler
    (ring/router [options
             ["" {:no-doc true}
-             ["/swagger.json" {:get (swagger/create-swagger-handler)}]
+             ["/swagger.json" {:get {:swagger
+                                     {:info {:title "Conduit API"}
+                                      :securityDefinitions
+                                      {:TokenAuth {:type "apiKey"
+                                                   :description "Authorization: Token jwt.token.here"
+                                                   :name "Authorization"
+                                                   :in "header"}}}
+                                     :handler (swagger/create-swagger-handler)}}]
              ["/api-docs/*" {:get (swagger-ui/create-swagger-ui-handler)}]]]
            {:data
             {:coercion reitit.coercion.spec/coercion
@@ -34,11 +41,3 @@
                           muuntaja/format-request-middleware
                           coercion/coerce-response-middleware
                           coercion/coerce-request-middleware]}})))
-
-#_[(exception/create-exception-middleware
-  (merge
-   exception/default-handlers
-   {:reitit.coercion/request-coercion (coercion-error-handler 400)
-    :reitit.coercion/response-coercion (coercion-error-handler 500)}))
- rrc/coerce-request-middleware
- rrc/coerce-response-middleware]

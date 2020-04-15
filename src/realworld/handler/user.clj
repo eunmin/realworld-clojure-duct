@@ -2,7 +2,7 @@
   (:require [integrant.core :as ig]))
 
 (defmethod ig/init-key :realworld.handler.user/current-user [_ options]
-  (fn [_]
+  (fn [{:keys [headers]}]
     {:status 200
      :body {:user
             {:email "jake@jake.jake"

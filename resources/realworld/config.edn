@@ -3,8 +3,6 @@
 
   :duct.router/cascading [#ig/ref :realworld.handler/router]
 
-  :realworld.reitit/spec-coercion {}
-
   :realworld.dto.user/require {}
   :realworld.dto.article/require {}
   :realworld.dto.comment/require {}
@@ -14,7 +12,9 @@
   ["/api"
    {:responses {422 {:body {:errors :realworld.dto.error/errors}}}}
    ["/user"
-    {:swagger {:tags ["user"]}}
+    {:swagger {:tags ["user"]
+               :security [{:TokenAuth []}]}
+     :middleware [#ig/ref :duct.middleware.buddy/authentication]}
     [""
      {:get {:summary "Get Current User"
             :responses {200 {:body {:user :realworld.dto.user/user}}}
@@ -44,7 +44,8 @@
              :responses {200 {:body {:profile :realworld.dto.user/profile}}}
              :handler #ig/ref :realworld.handler.profiles/get}}]
      ["/follow"
-      {:post {:summary "Follow user"
+      {:swagger {:security [{:TokenAuth []}]}
+       :post {:summary "Follow user"
               :parameters {:path {:username :realworld.dto.user/username}}
               :responses {200 {:body {:profile :realworld.dto.user/profile}}}
               :handler #ig/ref :realworld.handler.profiles/follow}
@@ -60,11 +61,13 @@
             :responses {200 {:body {:articles :realworld.dto.article/articles}}}
             :handler #ig/ref :realworld.handler.articles/list-article}
       :post {:summary "Create Article"
+             :swagger {:security [{:TokenAuth []}]}
              :parameters {:body :realworld.dto.article/create-input}
              :responses {200 {:body {:article :realworld.dto.article/article}}}
              :handler #ig/ref :realworld.handler.articles/create}}]
     ["/feed"
      {:conflicting true
+      :swagger {:security [{:TokenAuth []}]}
       :get {:summary "Feed Articles"
             :parameters {:query :realworld.dto.article/feed-query}
             :responses {200 {:body {:articles :realworld.dto.article/articles}}}
@@ -77,23 +80,26 @@
              :responses {200 {:body {:article :realworld.dto.article/article}}}
              :handler #ig/ref :realworld.handler.articles/get-article}
        :put {:summary "Update Article"
+             :swagger {:security [{:TokenAuth []}]}
              :parameters {:path {:slug :realworld.dto.article/slug}
                           :body :realworld.dto.article/update-input}
              :responses {200 {:path {:slug :realworld.dto.article/slug}
                               :body {:article :realworld.dto.article/article}}}
              :handler #ig/ref :realworld.handler.articles/update-article}
        :delete {:summary "Delete Article"
+                :swagger {:security [{:TokenAuth []}]}
                 :parameters {:path {:slug :realworld.dto.article/slug}}
                 :handler #ig/ref :realworld.handler.articles/delete-article}}]
      ["/favorite"
-       {:post {:summary "Favorite Article"
-               :parameters {:path {:slug :realworld.dto.article/slug}}
-               :responses {200 {:body {:article :realworld.dto.article/article}}}
-               :handler #ig/ref :realworld.handler.articles/favorite}
-        :delete {:summary "Unfavorite Article"
-                 :parameters {:path {:slug :realworld.dto.article/slug}}
-                 :responses {200 {:body {:article :realworld.dto.article/article}}}
-                 :handler #ig/ref :realworld.handler.articles/unfavorite}}]
+      {:swagger {:security [{:TokenAuth []}]}
+       :post {:summary "Favorite Article"
+              :parameters {:path {:slug :realworld.dto.article/slug}}
+              :responses {200 {:body {:article :realworld.dto.article/article}}}
+              :handler #ig/ref :realworld.handler.articles/favorite}
+       :delete {:summary "Unfavorite Article"
+                :parameters {:path {:slug :realworld.dto.article/slug}}
+                :responses {200 {:body {:article :realworld.dto.article/article}}}
+                :handler #ig/ref :realworld.handler.articles/unfavorite}}]
      ["/comments"
       [""
        {:get {:summary "Get Comments from an Article"
@@ -101,12 +107,14 @@
               :responses {200 {:body {:comments :realworld.dto.comment/comments}}}
               :handler #ig/ref :realworld.handler.comments/list-comment}
         :post {:summary "Add Comments to an Article"
+               :swagger {:security [{:TokenAuth []}]}
                :parameters {:path {:slug :realworld.dto.article/slug}
                             :body {:comment :realworld.dto.comment/create-input}}
                :responses {200 {:body {:comment :realworld.dto.comment/comment}}}
                :handler #ig/ref :realworld.handler.comments/add-comment}}
        ["/:id"
         {:delete {:summary "Delete Comment"
+                  :swagger {:security [{:TokenAuth []}]}
                   :parameters {:path {:slug :realworld.dto.article/slug
                                       :id :realworld.dto.comment/id}} 
                   :handler #ig/ref :realworld.handler.comments/delete-comment}}]]]]]
@@ -135,12 +143,18 @@
   :realworld.handler.comments/list-comment {}
   :realworld.handler.comments/add-comment {}
   :realworld.handler.comments/delete-comment {}
-  :realworld.handler.tags/list-tag {}}
+  :realworld.handler.tags/list-tag {}
+
+  :realworld.auth/auth-fn {}
+
+  :duct.middleware.buddy/authentication
+  {:backend :token
+   :realm   "Example"
+   :authfn  #ig/ref :realworld.auth/auth-fn}}
 
  :duct.profile/dev   #duct/include "dev"
  :duct.profile/local #duct/include "local"
  :duct.profile/prod  {}
 
  :duct.module/logging {}
- :duct.module.web/api
- {}}
+ :duct.module.web/api {}}
