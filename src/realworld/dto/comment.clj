@@ -15,8 +15,11 @@
                    ::body
                    ::article/author]))
 
-(s/def ::create-input
+(s/def :realworld.dto.comment.create-input/comment
   (s/keys :req-un [::body]))
+
+(s/def ::create-input
+  (s/keys :req-un [:realworld.dto.comment.create-input/comment]))
 
 (s/def ::comments
   (s/coll-of ::comment))

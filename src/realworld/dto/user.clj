@@ -23,20 +23,29 @@
                    ::image
                    ::following]))
 
-(s/def ::login-input
+(s/def :realworld.dto.user.login-input/user
   (s/keys :req-un [::email
                    ::password]))
 
-(s/def ::registration-input
+(s/def ::login-input
+  (s/keys :req-un [:realworld.dto.user.login-input/user]))
+
+(s/def :realworld.dto.user.registration-input/user
   (s/keys :req-un [::username
                    ::email
                    ::password]))
 
-(s/def ::update-input
+(s/def ::registration-input
+  (s/keys :req-un [:realworld.dto.user.registration-input/user]))
+
+(s/def :realworld.dto.user.update-input/user
   (s/keys :opt-un [::email
                    ::username
                    ::password
                    ::image
                    ::bio]))
+
+(s/def ::update-input
+  (s/keys :opt-un [:realworld.dto.user.update-input/user]))
 
 (defmethod ig/init-key ::require [_ _])

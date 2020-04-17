@@ -3,6 +3,10 @@
 
   :duct.router/cascading [#ig/ref :realworld.handler/router]
 
+  ;; :realworld.auth/auth-fn {}
+  ;; :realworld.auth/unauthorized-handler {}
+  ;; :realworld.auth/authorization {}
+  
   :realworld.dto.user/require {}
   :realworld.dto.article/require {}
   :realworld.dto.comment/require {}
@@ -10,29 +14,31 @@
   
   :realworld.handler/router
   ["/api"
-   {:responses {422 {:body {:errors :realworld.dto.error/errors}}}}
+   {:responses {422 {:body {:errors :realworld.dto.error/errors}}}
+    :middleware [;;#ig/ref :duct.middleware.buddy/authentication
+                 ;;#ig/ref :realworld.auth/authorization
+                 ]}
    ["/user"
     {:swagger {:tags ["user"]
-               :security [{:TokenAuth []}]}
-     :middleware [#ig/ref :duct.middleware.buddy/authentication]}
+               :security [{:TokenAuth []}]}}
     [""
      {:get {:summary "Get Current User"
             :responses {200 {:body {:user :realworld.dto.user/user}}}
             :handler #ig/ref :realworld.handler.user/current-user}
       :put {:summary "Update User"
-            :parameters {:body {:user :realworld.dto.user/update-input}}
+            :parameters {:body :realworld.dto.user/update-input}
             :responses {200 {:body {:user :realworld.dto.user/user}}}
             :handler #ig/ref :realworld.handler.user/update-user}}]]
    ["/users"
     {:swagger {:tags ["users"]}}
     [""
      {:post {:summary "Registration"
-             :parameters {:body {:user :realworld.dto.user/registration-input}}
+             :parameters {:body :realworld.dto.user/registration-input}
              :responses {200 {:body {:user :realworld.dto.user/user}}}
              :handler #ig/ref :realworld.handler.users/registration}}]
     ["/login"
      {:post {:summary "Authentication"
-             :parameters {:body {:user :realworld.dto.user/login-input}}
+             :parameters {:body :realworld.dto.user/login-input}
              :responses {200 {:body {:user :realworld.dto.user/user}}}
              :handler #ig/ref :realworld.handler.users/login}}]]
    ["/profiles"
@@ -109,7 +115,7 @@
         :post {:summary "Add Comments to an Article"
                :swagger {:security [{:TokenAuth []}]}
                :parameters {:path {:slug :realworld.dto.article/slug}
-                            :body {:comment :realworld.dto.comment/create-input}}
+                            :body :realworld.dto.comment/create-input}
                :responses {200 {:body {:comment :realworld.dto.comment/comment}}}
                :handler #ig/ref :realworld.handler.comments/add-comment}}
        ["/:id"
@@ -143,14 +149,7 @@
   :realworld.handler.comments/list-comment {}
   :realworld.handler.comments/add-comment {}
   :realworld.handler.comments/delete-comment {}
-  :realworld.handler.tags/list-tag {}
-
-  :realworld.auth/auth-fn {}
-
-  :duct.middleware.buddy/authentication
-  {:backend :token
-   :realm   "Example"
-   :authfn  #ig/ref :realworld.auth/auth-fn}}
+  :realworld.handler.tags/list-tag {}}
 
  :duct.profile/dev   #duct/include "dev"
  :duct.profile/local #duct/include "local"

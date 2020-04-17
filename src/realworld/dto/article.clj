@@ -30,16 +30,23 @@
 (s/def ::articles
   (s/coll-of ::article))
 
-(s/def ::create-input
+(s/def :realworld.dto.article.create-input/article
   (s/keys :req-un [::title
                    ::description
                    ::body]
           :opt-un [::tagList]))
 
-(s/def ::update-input
+(s/def ::create-input
+  (s/keys :req-un [:realworld.dto.article.create-input/article]))
+
+
+(s/def :realworld.dto.article.update-input/article
   (s/keys :opt-un [::title
                    ::description
                    ::body]))
+
+(s/def ::update-input
+  (s/keys :req-un [:realworld.dto.article.update-input/article]))
 
 (s/def :realworld.dto.article.query/author string?)
 (s/def :realworld.dto.article.query/favorited string?)
