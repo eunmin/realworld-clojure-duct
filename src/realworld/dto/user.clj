@@ -26,7 +26,6 @@
 (s/def :realworld.dto.user.login-input/user
   (s/keys :req-un [::email
                    ::password]))
-
 (s/def ::login-input
   (s/keys :req-un [:realworld.dto.user.login-input/user]))
 
@@ -34,7 +33,6 @@
   (s/keys :req-un [::username
                    ::email
                    ::password]))
-
 (s/def ::registration-input
   (s/keys :req-un [:realworld.dto.user.registration-input/user]))
 
@@ -44,7 +42,6 @@
                    ::password
                    ::image
                    ::bio]))
-
 (s/def ::update-input
   (s/keys :opt-un [:realworld.dto.user.update-input/user]))
 

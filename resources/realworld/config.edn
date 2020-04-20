@@ -5,8 +5,9 @@
 
   ;; :realworld.auth/auth-fn {}
   ;; :realworld.auth/unauthorized-handler {}
-  ;; :realworld.auth/authorization {}
-  
+  :realworld.auth/authorization {}
+  :realworld.auth/authentication {}
+  ;;#ig/ref :duct.middleware.buddy/authentication
   :realworld.dto.user/require {}
   :realworld.dto.article/require {}
   :realworld.dto.comment/require {}
@@ -15,12 +16,11 @@
   :realworld.handler/router
   ["/api"
    {:responses {422 {:body {:errors :realworld.dto.error/errors}}}
-    :middleware [;;#ig/ref :duct.middleware.buddy/authentication
-                 ;;#ig/ref :realworld.auth/authorization
-                 ]}
+    :middleware [#ig/ref :realworld.auth/authentication]}
    ["/user"
     {:swagger {:tags ["user"]
-               :security [{:TokenAuth []}]}}
+               :security [{:TokenAuth []}]}
+     :middleware [#ig/ref :realworld.auth/authorization]}
     [""
      {:get {:summary "Get Current User"
             :responses {200 {:body {:user :realworld.dto.user/user}}}
