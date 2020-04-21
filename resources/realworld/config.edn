@@ -3,11 +3,8 @@
 
   :duct.router/cascading [#ig/ref :realworld.handler/router]
 
-  ;; :realworld.auth/auth-fn {}
-  ;; :realworld.auth/unauthorized-handler {}
   :realworld.auth/authorization {}
   :realworld.auth/authentication {}
-  ;;#ig/ref :duct.middleware.buddy/authentication
   :realworld.dto.user/require {}
   :realworld.dto.article/require {}
   :realworld.dto.comment/require {}
@@ -132,7 +129,8 @@
             :handler #ig/ref :realworld.handler.tags/list-tag}}]]]
   
   :realworld.handler.users/login {}
-  :realworld.handler.users/registration {}
+  :realworld.handler.users/registration
+  {:db #ig/ref :duct.database/mongodb}
   :realworld.handler.user/current-user {}
   :realworld.handler.user/update-user {}
   :realworld.handler.profiles/get {}

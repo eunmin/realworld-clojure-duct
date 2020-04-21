@@ -6,7 +6,7 @@
                  [duct/core "0.7.0"]
                  [duct/module.logging "0.4.0"]
                  [duct/module.web "0.7.0"]
-;;                 [duct/middleware.buddy "0.1.0"]
+                 [me.grison/duct-mongodb "0.1.1"]
                  [buddy "2.0.0"]
                  [metosin/reitit "0.4.2"]
                  [metosin/ring-swagger-ui "3.25.0"]]
